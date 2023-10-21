@@ -33,8 +33,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//viewModel
-
+//manual DI
 @Composable
 fun Car(
     mainViewModel: MainViewModel = viewModel(), modifier: Modifier = Modifier) {
