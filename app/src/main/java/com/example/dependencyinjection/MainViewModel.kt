@@ -22,12 +22,14 @@ import kotlinx.coroutines.launch
 //lets not create the car here lets just pass it in
 class MainViewModel(private val carRepository: CarRepository) : ViewModel() {
 
+    //fun to do stuff with data or just get the original data
     fun login() : CarState {
         return carRepository.updateData()
     }
 
 
     // Define ViewModel factory in a companion object
+    //https://developer.android.com/topic/libraries/architecture/viewmodel/viewmodel-factories
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
