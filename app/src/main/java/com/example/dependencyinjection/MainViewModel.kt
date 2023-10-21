@@ -1,27 +1,43 @@
 package com.example.dependencyinjection
 
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.savedstate.SavedStateRegistryOwner
+import com.example.dependencyinjection.data.CarState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-data class MainUiState(
-    val carEngine: String = "" ,
-    val carFuelPump: String="",
-    val carTires: String=""
-)
-class MainViewModel : ViewModel(){
 
-    //this is our state flow which holds the data amd emits new state updates
-    private val _mainUiState= MutableStateFlow(MainUiState())
-    //mutable state flows a read only state
-    val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
+//lets not create the car here lets just pass it in
+class MainViewModel(private val carRepository: CarRepository) : ViewModel() {
 
-    init{
-        createCar()
+    fun login() : CarState {
+        return carRepository.updateData()
     }
-    fun createCar(){
-        _mainUiState.value = MainUiState("ford", "leaky", "michelin")
+
+
+    // Define ViewModel factory in a companion object
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val savedStateHandle = createSavedStateHandle()
+                val carRepository = (this[APPLICATION_KEY] as MyApplication).appContainer
+                MainViewModel(
+                    carRepository = carRepository
+                )
+            }
+        }
     }
 
 }
